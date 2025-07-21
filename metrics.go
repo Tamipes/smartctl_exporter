@@ -218,6 +218,14 @@ var (
 		},
 		nil,
 	)
+	metricDeviceReallocatedSectors = prometheus.NewDesc(
+		"smartctl_ata_reallocated_sector_count",
+		"SMART attribute: Reallocated Sector Count - Tami",
+		[]string{
+			"device",
+		},
+		nil,
+	)
 	metricDeviceExitStatus = prometheus.NewDesc(
 		"smartctl_device_smartctl_exit_status",
 		"Exit status of smartctl on device",

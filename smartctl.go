@@ -101,6 +101,7 @@ func (smart *SMARTctl) Collect() {
 	smart.mineDeviceSelfTestLog()
 	smart.mineDeviceERC()
 	smart.mineSmartStatus()
+	smart.mineReallocatedSectors()
 
 	if smart.device.interface_ == "nvme" {
 		smart.mineNvmePercentageUsed()
@@ -325,6 +326,26 @@ func (smart *SMARTctl) mineDeviceSCTStatus() {
 			status.Get("device_state").Float(),
 			smart.device.device,
 		)
+	}
+}
+
+func (smart *SMARTctl) mineReallocatedSectors() {
+	attributes := smart.json.Get("ata_smart_attributes").Get("table")
+	if !attributes.Exists() || !attributes.IsArray() {
+		return
+	}
+
+	for _, attr := range attributes.Array() {
+		if attr.Get("name").String() == "Reallocated_Sector_Ct" {
+			value := attr.Get("raw").Get("value").Float()
+			smart.ch <- prometheus.MustNewConstMetric(
+				metricDeviceReallocatedSectors,
+				prometheus.GaugeValue,
+				value,
+				smart.device.device,
+			)
+			return
+		}
 	}
 }
 
