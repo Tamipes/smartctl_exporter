@@ -8,3 +8,5 @@ debug/
 Manifest
 smartctl_exporter
 *.exe
+
+result
